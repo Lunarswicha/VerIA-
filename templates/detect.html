@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Analyser{% endblock %}
+{% block page_title %}Module VeriaDetect — Analyse de contenu{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <!-- Upload -->
+  <div class="col-lg-5">
+    <div class="vc-card">
+      <div class="vc-card-title"><i class="bi bi-search"></i> Charger un fichier</div>
+      <p class="vc-card-sub">Images (JPG, PNG, WEBP) ou documents (PDF, DOCX, TXT). Analyse 100% locale, aucune donnée transmise.</p>
+
+      <div class="upload-zone" id="detect-zone">
+        <input type="file" id="detect-input" accept=".jpg,.jpeg,.png,.webp,.bmp,.tiff,.pdf,.docx,.txt,.eml">
+        <div class="upload-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+        <h4>Glissez votre fichier ici</h4>
+        <p>ou cliquez pour sélectionner</p>
+      </div>
+
+      <div id="detect-preview-wrap" style="display:none;margin-top:1.25rem">
+        <div class="d-flex gap-3 align-items-start">
+          <img id="detect-preview-img" src="" alt="Aperçu"
+               style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--vc-border);display:none">
+          <div style="font-size:0.83rem">
+            <div style="font-weight:600;color:var(--vc-navy)" id="detect-fname">—</div>
+            <div style="color:var(--vc-text-muted)" id="detect-fsize">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn-vc-primary" id="detect-btn" disabled onclick="detectPage.run()">
+          <i class="bi bi-cpu"></i> Lancer l'analyse
+        </button>
+        <button class="btn-vc-outline" onclick="location.reload()">
+          <i class="bi bi-arrow-counterclockwise"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress (hidden by default) -->
+    <div class="vc-card mt-3" id="detect-progress" style="display:none">
+      <div class="vc-card-title"><i class="bi bi-cpu"></i> Analyse en cours</div>
+      <ul class="analysis-steps">
+        <li><span class="step-dot" id="step-d0">1</span> Chargement et normalisation</li>
+        <li><span class="step-dot" id="step-d1">2</span> Analyse spectrale (FFT)</li>
+        <li><span class="step-dot" id="step-d2">3</span> Extraction des caractéristiques texturales</li>
+        <li><span class="step-dot" id="step-d3">4</span> Inférence du modèle ML</li>
+        <li><span class="step-dot" id="step-d4">5</span> Calcul du score final</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="col-lg-7">
+    <div id="detect-result" style="display:none">
+      <div class="vc-card mb-3">
+        <div class="vc-card-title"><i class="bi bi-bar-chart"></i> Résultat de l'analyse</div>
+
+        <div id="verdict-card" class="verdict mt-2"></div>
+
+        <div class="gauge-wrap">
+          <div class="gauge-labels">
+            <span><i class="bi bi-circle-fill" style="color:var(--vc-success);font-size:0.6rem"></i> Authentique</span>
+            <span>Généré par IA <i class="bi bi-circle-fill" style="color:var(--vc-danger);font-size:0.6rem"></i></span>
+          </div>
+          <div class="gauge-track">
+            <div class="gauge-needle" id="gauge-needle"></div>
+          </div>
+          <div class="gauge-score"><span id="gauge-value">—</span> <small>/ 100 — score de synthèse IA</small></div>
+        </div>
+
+        <div class="cert-field mt-3">
+          <div class="lbl">Empreinte SHA-256 du fichier</div>
+          <div class="val hash" id="result-hash" style="font-size:0.72rem">—</div>
+        </div>
+      </div>
+
+      <div class="vc-card">
+        <div class="vc-card-title"><i class="bi bi-diagram-3"></i> Métriques forensiques</div>
+        <p style="font-size:0.78rem;color:var(--vc-text-muted);margin-bottom:1rem">
+          Détail des indicateurs utilisés pour calculer le score. Score élevé = signal IA détecté sur cet indicateur.
+        </p>
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <div class="metric-label">Énergie FFT</div>
+            <div class="metric-value" id="m-fft-val">—</div>
+            <div class="metric-bar"><div class="metric-bar-fill" id="m-fft-bar" style="width:0%"></div></div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Lissage des contours</div>
+            <div class="metric-value" id="m-edge-val">—</div>
+            <div class="metric-bar"><div class="metric-bar-fill" id="m-edge-bar" style="width:0%"></div></div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Entropie couleur</div>
+            <div class="metric-value" id="m-ent-val">—</div>
+            <div class="metric-bar"><div class="metric-bar-fill" id="m-ent-bar" style="width:0%"></div></div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Texture locale</div>
+            <div class="metric-value" id="m-var-val">—</div>
+            <div class="metric-bar"><div class="metric-bar-fill" id="m-var-bar" style="width:0%"></div></div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Bruit capteur</div>
+            <div class="metric-value" id="m-noise-val">—</div>
+            <div class="metric-bar"><div class="metric-bar-fill" id="m-noise-bar" style="width:0%"></div></div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-label">Score PRNU</div>
+            <div class="metric-value" id="m-prnu-val">—</div>
+            <div class="metric-bar"><div class="metric-bar-fill" id="m-prnu-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vc-notice">
+        <i class="bi bi-info-circle"></i>
+        <span>Ce système est un prototype académique (Master 2 SMI — VeriaChain). Les résultats ont une précision indicative d'environ 82% sur le jeu de test de référence. Toute décision conséquente doit s'appuyer sur une vérification humaine complémentaire. L'image analysée n'est pas stockée.</span>
+      </div>
+    </div>
+
+    <!-- Placeholder -->
+    <div id="detect-placeholder" class="vc-card" style="text-align:center;padding:3rem 2rem;color:var(--vc-text-muted)">
+      <i class="bi bi-search" style="font-size:2.5rem;display:block;margin-bottom:0.75rem;color:var(--vc-border)"></i>
+      <p style="margin:0;font-size:0.9rem">Chargez un fichier pour démarrer l'analyse.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  detectPage.init();
+  document.getElementById("detect-input").addEventListener("change", () => {
+    document.getElementById("detect-placeholder").style.display = "none";
+    document.getElementById("detect-preview-img").style.display = "block";
+  });
+</script>
+{% endblock %}

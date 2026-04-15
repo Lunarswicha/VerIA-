@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Connexion{% endblock %}
+
+{% block auth_content %}
+<div class="auth-card">
+  <div class="auth-logo">
+    <div class="logo-icon"><i class="bi bi-shield-lock-fill"></i></div>
+    <h1>Veria<strong>Chain</strong></h1>
+    <p>Authentification visuelle par IA et blockchain</p>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <div class="alert alert-{{ cat }} py-2 px-3 mb-3" style="font-size:0.85rem">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <form method="POST" action="{{ url_for('login') }}">
+    <div class="mb-3">
+      <label class="form-label fw-semibold" style="font-size:0.85rem">Adresse e-mail</label>
+      <input type="email" name="email" class="form-control form-control-sm" required autofocus>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold" style="font-size:0.85rem">Mot de passe</label>
+      <input type="password" name="password" class="form-control form-control-sm" required>
+    </div>
+    <div class="mb-3 d-flex align-items-center gap-2">
+      <input type="checkbox" name="remember" id="remember" class="form-check-input m-0">
+      <label for="remember" style="font-size:0.83rem;color:#64748B">Rester connecté</label>
+    </div>
+    <button type="submit" class="btn-vc-primary w-100 justify-content-center">
+      <i class="bi bi-box-arrow-in-right"></i> Se connecter
+    </button>
+  </form>
+
+  <hr class="my-3">
+  <p style="text-align:center;font-size:0.82rem;color:#64748B">
+    Pas encore de compte ?
+    <a href="{{ url_for('register') }}" style="color:var(--vc-navy);font-weight:600">Créer un compte</a>
+  </p>
+
+  <div style="text-align:center;margin-top:1rem;font-size:0.72rem;color:#94A3B8">
+    Prototype M2 — Systèmes de Management d'Information · 2026
+  </div>
+</div>
+{% endblock %}

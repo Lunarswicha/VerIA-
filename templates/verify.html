@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Vérifier{% endblock %}
+{% block page_title %}Vérification de certificat{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="vc-card">
+      <div class="vc-card-title"><i class="bi bi-clipboard2-check"></i> Vérifier l'authenticité</div>
+      <p class="vc-card-sub">Entrez un identifiant de certification, rechargez l'image originale, ou collez un hash SHA-256.</p>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold" style="font-size:0.83rem">Identifiant de certification</label>
+        <input type="text" id="ver-cert-id" class="form-control form-control-sm"
+               placeholder="Ex. : vc_a3f8b2c1d4e5f601…">
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <hr style="flex:1;border-color:var(--vc-border)">
+        <span style="font-size:0.75rem;color:var(--vc-text-muted)">ou par image</span>
+        <hr style="flex:1;border-color:var(--vc-border)">
+      </div>
+
+      <div class="upload-zone" id="ver-zone">
+        <input type="file" id="ver-input" accept=".jpg,.jpeg,.png,.webp,.pdf,.docx">
+        <div class="upload-icon"><i class="bi bi-file-earmark-search"></i></div>
+        <h4>Charger le fichier à vérifier</h4>
+        <p>Son hash sera comparé aux certificats enregistrés</p>
+      </div>
+
+      <div id="ver-preview-wrap" style="display:none;margin-top:1rem;font-size:0.83rem">
+        <div style="color:var(--vc-text-muted)">Fichier chargé :</div>
+        <div style="font-weight:600;color:var(--vc-navy)" id="ver-fname">—</div>
+        <div style="color:var(--vc-text-muted)" id="ver-fsize">—</div>
+      </div>
+
+      <button class="btn-vc-primary mt-3" id="ver-btn" onclick="verifyPage.run()">
+        <i class="bi bi-search"></i> Vérifier
+      </button>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div id="ver-result" style="display:none"></div>
+
+    <div class="vc-card" style="text-align:center;padding:3rem 2rem;color:var(--vc-text-muted)">
+      <i class="bi bi-clipboard2-check" style="font-size:2.5rem;display:block;margin-bottom:0.75rem;color:var(--vc-border)"></i>
+      <p style="margin:0;font-size:0.9rem">Entrez un identifiant ou chargez un fichier pour démarrer la vérification.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>verifyPage.init();</script>
+{% endblock %}

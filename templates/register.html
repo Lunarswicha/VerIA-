@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Créer un compte{% endblock %}
+
+{% block auth_content %}
+<div class="auth-card">
+  <div class="auth-logo">
+    <div class="logo-icon"><i class="bi bi-shield-lock-fill"></i></div>
+    <h1>Créer un compte</h1>
+    <p>Accédez à tous les modules VeriaChain</p>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <div class="alert alert-{{ cat }} py-2 px-3 mb-3" style="font-size:0.85rem">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <form method="POST" action="{{ url_for('register') }}">
+    <div class="mb-3">
+      <label class="form-label fw-semibold" style="font-size:0.85rem">Nom complet</label>
+      <input type="text" name="name" class="form-control form-control-sm" required autofocus>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold" style="font-size:0.85rem">Adresse e-mail</label>
+      <input type="email" name="email" class="form-control form-control-sm" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold" style="font-size:0.85rem">Mot de passe <small style="color:#94A3B8">(8 caractères min.)</small></label>
+      <input type="password" name="password" class="form-control form-control-sm" required minlength="8">
+    </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold" style="font-size:0.85rem">Confirmer le mot de passe</label>
+      <input type="password" name="confirm" class="form-control form-control-sm" required>
+    </div>
+    <button type="submit" class="btn-vc-primary w-100 justify-content-center">
+      <i class="bi bi-person-plus"></i> Créer mon compte
+    </button>
+  </form>
+
+  <hr class="my-3">
+  <p style="text-align:center;font-size:0.82rem;color:#64748B">
+    Déjà un compte ?
+    <a href="{{ url_for('login') }}" style="color:var(--vc-navy);font-weight:600">Se connecter</a>
+  </p>
+</div>
+{% endblock %}

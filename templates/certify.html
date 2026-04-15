@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Certifier{% endblock %}
+{% block page_title %}Module VeriaStamp — Certification blockchain{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="vc-card">
+      <div class="vc-card-title"><i class="bi bi-patch-check"></i> Certifier une image</div>
+      <p class="vc-card-sub">Seul le hash SHA-256 de votre image est utilisé. L'image originale n'est jamais transmise ni stockée.</p>
+
+      <div class="upload-zone" id="cert-zone">
+        <input type="file" id="cert-input" accept=".jpg,.jpeg,.png,.webp,.pdf,.docx">
+        <div class="upload-icon"><i class="bi bi-image"></i></div>
+        <h4>Glissez votre fichier à certifier</h4>
+        <p>JPG, PNG, WEBP, PDF, DOCX</p>
+      </div>
+
+      <div id="cert-preview-wrap" style="display:none;margin-top:1.25rem">
+        <div class="d-flex gap-3 align-items-start">
+          <img id="cert-preview-img" src="" alt="Aperçu"
+               style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--vc-border)">
+          <div style="font-size:0.83rem">
+            <div style="font-weight:600;color:var(--vc-navy)" id="cert-fname">—</div>
+            <div style="color:var(--vc-text-muted)" id="cert-fsize">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metadata form -->
+      <div id="cert-meta-form" style="display:none;margin-top:1.25rem">
+        <div class="mb-3">
+          <label class="form-label fw-semibold" style="font-size:0.83rem">Titre <span style="color:var(--vc-danger)">*</span></label>
+          <input type="text" id="cert-title" class="form-control form-control-sm" placeholder="Ex. : Photographie prise à Paris, le 14 avril 2026">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" style="font-size:0.83rem">Auteur <span style="color:var(--vc-danger)">*</span></label>
+          <input type="text" id="cert-author" class="form-control form-control-sm"
+                 value="{{ current_user.name }}" placeholder="Votre nom">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold" style="font-size:0.83rem">Description <span style="color:var(--vc-text-muted)">(optionnel)</span></label>
+          <textarea id="cert-desc" class="form-control form-control-sm" rows="3"
+                    placeholder="Contexte, date, lieu, technique de prise de vue…"></textarea>
+        </div>
+      </div>
+
+      <button class="btn-vc-teal mt-2" id="cert-btn" disabled onclick="certifyPage.run()">
+        <i class="bi bi-patch-check"></i> Générer le certificat
+      </button>
+    </div>
+
+    <div class="vc-notice mt-3">
+      <i class="bi bi-lock"></i>
+      <div>
+        <strong>Confidentialité :</strong> Seul le hash SHA-256 (empreinte irréversible) de votre fichier est traité. L'image originale n'est jamais stockée. Le certificat est enregistré localement et simulé sur Polygon (en mode démo).
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div id="cert-result" style="display:none" class="cert-card">
+      <div class="cert-header">
+        <i class="bi bi-patch-check-fill text-success fs-4"></i>
+        <h3>Certificat d'authenticité généré</h3>
+      </div>
+      <div class="cert-field">
+        <div class="lbl">Identifiant de certification</div>
+        <div class="val hash" id="cert-id-val">—</div>
+      </div>
+      <div class="cert-field">
+        <div class="lbl">Hash SHA-256 de l'image</div>
+        <div class="val hash" id="cert-hash-val">—</div>
+      </div>
+      <div class="cert-field">
+        <div class="lbl">Hash IPFS des métadonnées</div>
+        <div class="val hash" id="cert-ipfs-val">—</div>
+      </div>
+      <div class="cert-field">
+        <div class="lbl">Auteur certifié</div>
+        <div class="val" id="cert-author-val">—</div>
+      </div>
+      <div class="cert-field">
+        <div class="lbl">Titre</div>
+        <div class="val" id="cert-title-val">—</div>
+      </div>
+      <div class="cert-field">
+        <div class="lbl">Horodatage</div>
+        <div class="val" id="cert-ts-val">—</div>
+      </div>
+      <div class="cert-field">
+        <div class="lbl">Transaction (Polygon)</div>
+        <div class="val hash" id="cert-tx-val">—</div>
+      </div>
+      <div class="cert-field">
+        <div class="lbl">Réseau</div>
+        <div class="val" id="cert-net-val">—</div>
+      </div>
+      <div class="cert-field">
+        <div class="lbl">Statut</div>
+        <div class="val" style="color:var(--vc-success);font-weight:700">
+          <i class="bi bi-shield-check"></i> CERTIFIE — Non modifié depuis certification
+        </div>
+      </div>
+    </div>
+
+    <div class="vc-card" style="text-align:center;padding:3rem 2rem;color:var(--vc-text-muted)" id="cert-placeholder">
+      <i class="bi bi-patch-check" style="font-size:2.5rem;display:block;margin-bottom:0.75rem;color:var(--vc-border)"></i>
+      <p style="margin:0;font-size:0.9rem">Votre certificat apparaîtra ici.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  certifyPage.init();
+  document.getElementById("cert-zone").addEventListener("click", () => {
+    document.getElementById("cert-placeholder").style.display = "none";
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Tableau de bord{% endblock %}
+{% block page_title %}Tableau de bord{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-icon navy"><i class="bi bi-search"></i></div>
+      <div>
+        <div class="stat-count">{{ current_user.analyses_count }}</div>
+        <div class="stat-label">Analyses effectuées</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-icon teal"><i class="bi bi-patch-check"></i></div>
+      <div>
+        <div class="stat-count">{{ current_user.certifications_count }}</div>
+        <div class="stat-label">Certifications émises</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="bi bi-shield-lock"></i></div>
+      <div>
+        <div class="stat-count">0 Ko</div>
+        <div class="stat-label">Données stockées côté serveur</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick actions -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <a href="{{ url_for('detect') }}" class="vc-card d-block text-decoration-none" style="border-top:3px solid var(--vc-navy)">
+      <div class="vc-card-title"><i class="bi bi-search"></i> Analyser une image</div>
+      <p class="vc-card-sub mb-0">Estimez la probabilité qu'une image soit générée par IA. Analyse locale, aucune donnée transmise.</p>
+    </a>
+  </div>
+  <div class="col-md-4">
+    <a href="{{ url_for('certify') }}" class="vc-card d-block text-decoration-none" style="border-top:3px solid var(--vc-teal)">
+      <div class="vc-card-title"><i class="bi bi-patch-check"></i> Certifier une image</div>
+      <p class="vc-card-sub mb-0">Enregistrez l'empreinte cryptographique de votre image sur la blockchain Polygon.</p>
+    </a>
+  </div>
+  <div class="col-md-4">
+    <a href="{{ url_for('verify') }}" class="vc-card d-block text-decoration-none" style="border-top:3px solid #16A34A">
+      <div class="vc-card-title"><i class="bi bi-clipboard2-check"></i> Vérifier un certificat</div>
+      <p class="vc-card-sub mb-0">Vérifiez si une image a été certifiée et si elle correspond à l'original.</p>
+    </a>
+  </div>
+</div>
+
+<!-- Recent analyses -->
+<div class="vc-card">
+  <div class="vc-card-title"><i class="bi bi-clock-history"></i> Analyses récentes</div>
+  {% if recent %}
+  <div class="table-responsive">
+    <table class="vc-table">
+      <thead>
+        <tr>
+          <th>Fichier</th>
+          <th>Type</th>
+          <th>Résultat</th>
+          <th>Probabilité IA</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in recent %}
+        <tr>
+          <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="{{ log.filename }}">
+            {{ log.filename }}
+          </td>
+          <td>
+            <span class="badge" style="background:var(--vc-bg);color:var(--vc-text-muted);border:1px solid var(--vc-border)">
+              {{ log.file_type }}
+            </span>
+          </td>
+          <td style="font-size:0.82rem">{{ log.label }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div style="width:80px;height:6px;background:var(--vc-border);border-radius:999px;overflow:hidden">
+                <div style="height:100%;width:{{ (log.ai_probability * 100)|round(0) }}%;
+                     background:{{ 'var(--vc-success)' if log.ai_probability < 0.4 else ('var(--vc-warning)' if log.ai_probability < 0.7 else 'var(--vc-danger)') }};
+                     border-radius:999px"></div>
+              </div>
+              <span style="font-size:0.8rem;font-weight:600">{{ (log.ai_probability * 100)|round(1) }}%</span>
+            </div>
+          </td>
+          <td style="font-size:0.78rem;color:var(--vc-text-muted)">{{ log.created_at | fmt_date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p style="color:var(--vc-text-muted);font-size:0.85rem;margin:0">Aucune analyse effectuée. <a href="{{ url_for('detect') }}" style="color:var(--vc-navy)">Commencer</a></p>
+  {% endif %}
+</div>
+
+<!-- System info -->
+<div class="vc-notice mt-3">
+  <i class="bi bi-info-circle"></i>
+  <div>
+    <strong>Architecture de confidentialité :</strong> Aucune image n'est stockée sur les serveurs VeriaChain.
+    L'analyse s'effectue en mémoire et les données sont supprimées immédiatement après. Seuls les journaux d'activité anonymisés (nom de fichier, score, date) sont conservés pour votre historique.
+  </div>
+</div>
+{% endblock %}

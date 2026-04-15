@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Historique{% endblock %}
+{% block page_title %}Historique des analyses{% endblock %}
+
+{% block content %}
+<div class="vc-card">
+  <div class="vc-card-title"><i class="bi bi-clock-history"></i> Analyses récentes</div>
+  {% if logs %}
+  <div class="table-responsive mt-2">
+    <table class="vc-table">
+      <thead>
+        <tr>
+          <th>Fichier</th>
+          <th>Type</th>
+          <th>Résultat</th>
+          <th>Score IA</th>
+          <th>Mode</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="{{ log.filename }}">
+            {{ log.filename }}
+          </td>
+          <td>
+            <span class="badge bg-light text-secondary border">{{ log.file_type }}</span>
+          </td>
+          <td style="font-size:0.82rem">{{ log.label }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div style="width:70px;height:5px;background:var(--vc-border);border-radius:999px;overflow:hidden">
+                <div style="height:100%;width:{{ (log.ai_probability * 100)|round(0) }}%;
+                     background:{{ '#16A34A' if log.ai_probability < 0.4 else ('#D97706' if log.ai_probability < 0.7 else '#DC2626') }};
+                     border-radius:999px"></div>
+              </div>
+              <span style="font-size:0.8rem;font-weight:600">{{ (log.ai_probability * 100)|round(1) }}%</span>
+            </div>
+          </td>
+          <td style="font-size:0.75rem;color:var(--vc-text-muted)">{{ log.mode }}</td>
+          <td style="font-size:0.78rem;color:var(--vc-text-muted)">{{ log.created_at | fmt_date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p style="color:var(--vc-text-muted);font-size:0.85rem;margin:1rem 0 0">
+    Aucune analyse effectuée. <a href="{{ url_for('detect') }}" style="color:var(--vc-navy)">Commencer</a>
+  </p>
+  {% endif %}
+</div>
+{% endblock %}
