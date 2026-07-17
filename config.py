@@ -28,7 +28,7 @@ class Config:
     # "frequency"   uses only local FFT/texture analysis (offline, less accurate)
     # "ensemble"    combines both (recommended)
     DETECTION_MODE = os.getenv("DETECTION_MODE", "ensemble")
-    HF_MODEL_ID    = "dima806/deepfake-vs-real-image-detection"
+    HF_MODEL_ID    = "umm-maybe/AI-image-detector"
     MODEL_CACHE_DIR = BASE_DIR / "models"
 
     # Blockchain (Polygon Mumbai testnet for dev, Polygon Mainnet for prod)

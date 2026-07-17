@@ -263,9 +263,9 @@ class FrequencyAnalyzer:
 
 class HuggingFaceDetector:
     """
-    Détecteur basé sur le modèle dima806/deepfake-vs-real-image-detection
-    (EfficientNet-B0 fine-tuné sur FaceForensics++ + DFDC).
-    Téléchargement automatique ~95 Mo au premier lancement.
+    Détecteur basé sur le modèle umm-maybe/AI-image-detector,
+    celui évalué au chapitre 10 du mémoire (533 images, dataset Hemg).
+    Téléchargement automatique au premier lancement.
     """
 
     def __init__(self, model_id: str, cache_dir: Path):
@@ -337,7 +337,7 @@ class VeriaDetector:
         self.mode     = getattr(config, "DETECTION_MODE", "ensemble")
         self.freq_analyzer = FrequencyAnalyzer()
         self.hf_detector   = HuggingFaceDetector(
-            model_id  = getattr(config, "HF_MODEL_ID", "dima806/deepfake-vs-real-image-detection"),
+            model_id  = getattr(config, "HF_MODEL_ID", "umm-maybe/AI-image-detector"),
             cache_dir = Path(getattr(config, "MODEL_CACHE_DIR", "models")),
         )
 

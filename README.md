@@ -10,7 +10,7 @@ Prototype M2 SMI — Système de détection et certification de l'authenticité 
 ## Installation (une seule fois)
 
 ```bash
-cd veriachain_app
+cd VerIA-
 pip install -r requirements.txt
 ```
 
@@ -43,8 +43,21 @@ Sans ces variables, l'application fonctionne en mode démo complet (simulation b
 
 ## Déploiement du contrat Solidity
 
-Le contrat `VeriaStamp` (code dans `certification/blockchain.py` → `VERIASTAMP_ABI`) peut être
-déployé via [Remix IDE](https://remix.ethereum.org) sur Polygon Mumbai (testnet) ou Polygon Mainnet.
+Le contrat `VeriaStamp` (source : `contracts/VeriaStamp.sol`, ABI : `certification/blockchain.py`)
+peut être déployé via [Remix IDE](https://remix.ethereum.org) sur Polygon Amoy (testnet) ou Polygon Mainnet.
+
+## Évaluation reproductible
+
+Le protocole d'évaluation du chapitre 10 du mémoire (533 images du dataset public
+`Hemg/AI-Generated-vs-Real-Images-Datasets`, seed fixe, trois configurations) se relance avec :
+
+```bash
+python evaluate.py            # évaluation complète
+python evaluate.py --limit 50 # essai rapide
+```
+
+Sorties : `eval_results.json` (prédictions individuelles) et `eval_report.txt`
+(accuracy, précision, rappel, F1 par configuration).
 
 ## Architecture
 
@@ -73,4 +86,4 @@ veriachain_app/
 | `frequency` | Analyse spectrale + texture locale     | ~68%              |
 
 ---
- Prototype académique, Master 2 SMI, Sacha Ferand, 2026*
+*VeriaChain — Prototype académique, Master 2 SMI, Sacha Ferand, 2026*

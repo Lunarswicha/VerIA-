@@ -384,9 +384,9 @@ def fmt_date_filter(value):
 # ──────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    host = os.getenv("HOST", "0.0.0.0")
+    host = os.getenv("HOST", "127.0.0.1")
     port = int(os.getenv("PORT", "5000"))
-    debug = os.getenv("FLASK_DEBUG", "1") == "1"
+    debug = os.getenv("FLASK_DEBUG", "0") == "1"
 
     print("\n" + "="*60)
     print("  VeriaChain — Prototype M2 SMI")
