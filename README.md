@@ -73,4 +73,4 @@ veriachain_app/
 | `frequency` | Analyse spectrale + texture locale     | ~68%              |
 
 ---
-*VeriaChain — Prototype académique, Master 2 SMI, Sacha Ferand, 2026*
+ Prototype académique, Master 2 SMI, Sacha Ferand, 2026*
